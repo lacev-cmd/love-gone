@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Gone — Write about them</title>
+<style>
+/* ── TOKENS ──────────────────────────────────────────── */
+:root {
+  --bg:           #f3f1eb;
+  --surface:      #ffffff;
+  --surface2:     #f8f6f0;
+  --surface3:     #eee9dc;
+  --ink:          #171512;
+  --text:         #211f1a;
+  --muted:        #676157;
+  --faint:        #9b968c;
+  --border:       #e1dbcc;
+  --border-strong:#bfb7a6;
+  --black:        #14120f;
+  --cream:        #f6efe2;
+  --warn:         #92601a;
+  --warn-light:   #fdf3e3;
+  --danger:       #8b1f1f;
+  --danger-light: #fdeaea;
+  --gap-mark:     #b35a1a;
+  --gap-light:    #fef4ec;
+  --moving:       #1a4a6b;
+  --moving-light: #eaf2f8;
+  --accent:       #C4965A;
+  --accent-light: #f5ead8;
+  --flag:         #6b5a1a;
+  --flag-light:   #f8f4e8;
+  --flag-border:  #d8c890;
+  --r-lg:         20px;
+  --r-md:         14px;
+  --r-sm:         8px;
+  --shadow:       0 8px 32px rgba(20,18,15,.07);
+}
+*  { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.55;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+button,input,textarea,select { font:inherit; }
+button { cursor:pointer; }
+button:disabled { opacity:.5; cursor:default; }
+::selection { background: var(--accent-light); }
+
+/* ── TYPOGRAPHY ─────────────────────────────────────── */
+.serif { font-family: Georgia,"Times New Roman",serif; }
+h1,h2,h3 { letter-spacing:-.03em; }
+
+/* ── BUTTONS ────────────────────────────────────────── */
+.btn {
+  display:inline-flex; align-items:center; gap:.45rem;
+  border:1px solid var(--border);
+  background:var(--surface2);
+  border-radius:999px;
+  padding:.6rem 1.1rem;
+  font-size:.82rem; font-weight:650;
+  color:var(--text);
+  transition:all .12s;
+  white-space:nowrap;
+}
+.btn:hover { border-color:var(--border-strong); transform:translateY(-1px); }
+.btn-primary { background:var(--black); color:var(--cream); border-color:var(--black); }
+.btn-accent  { background:var(--accent); color:#fff; border-color:var(--accent); }
+.btn-danger  { background:var(--danger-light); color:var(--danger); border-color:#efb5b5; }
+.btn-sm      { padding:.38rem .75rem; font-size:.76rem; }
+
+/* ── SCREENS ────────────────────────────────────────── */
+.screen { display:none; min-height:100vh; }
+.screen.active { display:block; }
+
+/* ── ONBOARD ────────────────────────────────────────── */
+#screen-onboard {
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:clamp(2rem,5vw,4rem) 1rem;
+  min-height:100vh;
+}
+.onboard-wrap { max-width:560px; width:100%; }
+.brand-kicker {
+  font-size:.65rem; letter-spacing:.16em; text-transform:uppercase;
+  font-weight:800; color:var(--faint); margin-bottom:.9rem;
+}
+.onboard-title {
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(2.6rem,8vw,5rem);
+  line-height:.92; letter-spacing:-.06em;
+  margin-bottom:1rem; color:var(--black);
+}
+.onboard-lead {
+  font-size:clamp(.95rem,2vw,1.12rem);
+  color:var(--muted); line-height:1.72;
+  max-width:480px; margin-bottom:2rem;
+}
+.what-this-is {
+  background:rgba(255,255,255,.72);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:1.4rem 1.5rem;
+  margin-bottom:1.8rem;
+}
+.what-this-is p {
+  font-size:.86rem; color:var(--muted);
+  line-height:1.72; margin-bottom:.75rem;
+}
+.what-this-is p:last-child { margin-bottom:0; }
+.what-this-is strong { color:var(--text); }
+.onboard-actions { display:flex; gap:.75rem; flex-wrap:wrap; align-items:center; }
+
+/* ── MAIN APP ───────────────────────────────────────── */
+#screen-app { display:none; padding:0 0 6rem; }
+
+.app-header {
+  position:sticky; top:0; z-index:40;
+  background:rgba(243,241,235,.92);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  padding:.6rem 0;
+}
+.app-header-inner {
+  width:min(960px,calc(100vw - 2rem));
+  margin:0 auto;
+  display:flex; align-items:center; justify-content:space-between; gap:1rem;
+}
+.app-brand { display:flex; align-items:baseline; gap:.6rem; }
+.app-brand-name {
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:1.1rem; letter-spacing:-.04em; color:var(--black);
+}
+.app-brand-domain {
+  font-size:.66rem; letter-spacing:.12em; text-transform:uppercase;
+  font-weight:800; color:var(--faint);
+}
+.app-header-actions { display:flex; gap:.5rem; flex-wrap:wrap; }
+
+/* ── TABS ───────────────────────────────────────────── */
+.tabs-bar {
+  width:min(960px,calc(100vw - 2rem));
+  margin:1.4rem auto .6rem;
+  display:flex; gap:.35rem; flex-wrap:wrap;
+}
+.tab-btn {
+  border:1px solid transparent;
+  background:none; border-radius:999px;
+  padding:.42rem .9rem;
+  font-size:.78rem; font-weight:700;
+  color:var(--muted);
+  transition:all .12s;
+}
+.tab-btn:hover { color:var(--text); }
+.tab-btn.active {
+  background:var(--surface);
+  border-color:var(--border);
+  color:var(--black);
+  box-shadow:0 2px 8px rgba(20,18,15,.05);
+}
+
+.tab-pane { display:none; }
+.tab-pane.active { display:block; }
+.tab-content {
+  width:min(960px,calc(100vw - 2rem));
+  margin:0 auto;
+}
+
+/* ── CARDS ──────────────────────────────────────────── */
+.card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:clamp(1.2rem,3vw,2rem);
+  box-shadow:var(--shadow);
+  margin-bottom:1rem;
+}
+.card-title {
+  font-size:.66rem; letter-spacing:.14em; text-transform:uppercase;
+  font-weight:800; color:var(--faint); margin-bottom:.9rem;
+}
+.card h2 {
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:clamp(1.5rem,3vw,2.2rem);
+  letter-spacing:-.045em; margin-bottom:.5rem; color:var(--black);
+}
+.card p { color:var(--muted); font-size:.9rem; line-height:1.7; margin-bottom:.9rem; }
+.card p:last-child { margin-bottom:0; }
+
+/* ── FORM ELEMENTS ──────────────────────────────────── */
+textarea, input[type="text"], input[type="date"], select {
+  width:100%; padding:.7rem .9rem;
+  border:1px solid var(--border); border-radius:var(--r-md);
+  background:var(--surface2); color:var(--text);
+  font-size:.88rem; line-height:1.55;
+  transition:border-color .12s;
+  resize:vertical;
+}
+textarea:focus, input:focus, select:focus {
+  outline:none; border-color:var(--accent);
+  box-shadow:0 0 0 3px var(--accent-light);
+}
+textarea { min-height:120px; }
+label {
+  display:block; font-size:.76rem; font-weight:750;
+  text-transform:uppercase; letter-spacing:.08em;
+  color:var(--muted); margin-bottom:.45rem;
+}
+.field { margin-bottom:1.1rem; }
+.field:last-child { margin-bottom:0; }
+.field-row { display:flex; gap:.75rem; align-items:flex-end; }
+.field-row .field { flex:1; margin-bottom:0; }
+.form-hint { font-size:.78rem; color:var(--faint); margin-top:.35rem; line-height:1.5; }
+.status-msg {
+  display:none; font-size:.78rem; color:var(--accent);
+  margin-top:.5rem; font-weight:650;
+}
+
+/* ── ENTRY LIST ─────────────────────────────────────── */
+.entry-list { display:grid; gap:.65rem; margin-top:1rem; }
+.entry-item {
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:var(--r-md);
+  padding:1rem 1.1rem;
+}
+.entry-item.flagged { border-color:var(--flag-border); background:var(--flag-light); }
+.entry-meta { display:flex; gap:.6rem; align-items:center; margin-bottom:.45rem; }
+.entry-meta strong { font-size:.78rem; font-weight:750; color:var(--black); }
+.entry-meta span {
+  font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+  font-weight:800; color:var(--flag); background:var(--flag-light);
+  border:1px solid var(--flag-border); border-radius:999px;
+  padding:.1rem .5rem;
+}
+.entry-text { font-size:.88rem; color:var(--text); line-height:1.65; margin-bottom:.65rem; white-space:pre-wrap; }
+.entry-actions { display:flex; gap:.45rem; flex-wrap:wrap; }
+.empty-note { color:var(--faint); font-size:.85rem; padding:.5rem 0; }
+
+/* ── CORRECTION LIST ────────────────────────────────── */
+.correction-item {
+  border:1px solid var(--border); border-radius:var(--r-sm);
+  padding:.75rem .9rem; margin-bottom:.5rem;
+  font-size:.86rem; display:flex; gap:.75rem;
+  align-items:flex-start; justify-content:space-between;
+}
+.correction-date { font-size:.72rem; color:var(--faint); white-space:nowrap; }
+
+/* ── REPORT OUTPUT ──────────────────────────────────── */
+.report-empty {
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  min-height:260px; text-align:center;
+  color:var(--faint); gap:.75rem;
+}
+.report-empty p { font-size:.88rem; max-width:400px; line-height:1.65; }
+
+#reportOutput {
+  display:none;
+  padding-bottom:2rem;
+}
+
+.report-block {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:1.4rem 1.6rem;
+  margin-bottom:.85rem;
+  box-shadow:var(--shadow);
+}
+.report-block-title {
+  font-size:.63rem; letter-spacing:.14em; text-transform:uppercase;
+  font-weight:800; color:var(--faint); margin-bottom:.75rem;
+}
+.report-block h3 {
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:1.3rem; letter-spacing:-.04em;
+  margin-bottom:.6rem; color:var(--black);
+}
+.report-item {
+  font-size:.88rem; color:var(--text);
+  line-height:1.7; margin-bottom:.5rem;
+  padding-left:.9rem; border-left:2px solid var(--border);
+}
+.report-item:last-child { margin-bottom:0; }
+.report-item.moving { border-left-color:var(--moving); }
+.report-item.gap    { border-left-color:var(--gap-mark); }
+.report-item.warn   { border-left-color:var(--warn); }
+.report-item.held   { border-left-color:var(--flag); }
+
+.confidence-badge {
+  display:inline-flex; align-items:center;
+  font-size:.66rem; letter-spacing:.08em; text-transform:uppercase;
+  font-weight:800; border-radius:999px;
+  padding:.18rem .6rem;
+  border:1px solid;
+}
+.confidence-badge.strong   { color:#1a4a2b; background:#e4f2ea; border-color:#b3d9bf; }
+.confidence-badge.supported{ color:#1a4a6b; background:var(--moving-light); border-color:#b3cfe0; }
+.confidence-badge.partial  { color:var(--warn); background:var(--warn-light); border-color:#deb87a; }
+.confidence-badge.thin,
+.confidence-badge.inferred { color:var(--muted); background:var(--surface3); border-color:var(--border-strong); }
+.confidence-badge.not_readable { color:var(--danger); background:var(--danger-light); border-color:#efb5b5; }
+
+.next-move-block {
+  background:var(--black); color:var(--cream);
+  border-radius:var(--r-lg);
+  padding:1.4rem 1.6rem;
+  margin-bottom:.85rem;
+}
+.next-move-block .report-block-title { color:rgba(246,239,226,.55); }
+.next-move-block h3 { color:var(--cream); }
+.next-move-block p { color:rgba(246,239,226,.78); font-size:.9rem; line-height:1.7; }
+
+.summary-capstone {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:1.4rem 1.6rem;
+  margin-bottom:1rem;
+  box-shadow:var(--shadow);
+}
+.summary-title {
+  font-size:.63rem; letter-spacing:.14em; text-transform:uppercase;
+  font-weight:800; color:var(--faint); margin-bottom:.75rem;
+}
+.summary-row {
+  display:grid; grid-template-columns:130px 1fr;
+  gap:.75rem; padding:.5rem 0;
+  border-top:1px solid var(--border);
+  font-size:.86rem;
+}
+.summary-row strong { color:var(--black); font-weight:750; }
+.summary-row span { color:var(--muted); line-height:1.55; }
+
+/* ── CRISIS ─────────────────────────────────────────── */
+.crisis-banner {
+  display:none;
+  background:var(--danger-light);
+  border:1px solid #efb5b5;
+  color:var(--danger);
+  border-radius:var(--r-md);
+  padding:1rem 1.2rem;
+  margin-bottom:1rem;
+  font-size:.88rem;
+  line-height:1.65;
+}
+.crisis-banner strong { display:block; margin-bottom:.35rem; }
+
+/* ── GAPS NOTICE ────────────────────────────────────── */
+.gap-notice {
+  background:var(--gap-light);
+  border:1px solid #e8b88a;
+  border-radius:var(--r-md);
+  padding:.8rem 1rem;
+  font-size:.82rem;
+  color:var(--gap-mark);
+  line-height:1.6;
+  margin-bottom:.65rem;
+}
+
+/* ── REPORT CONTROLS ────────────────────────────────── */
+.report-controls {
+  display:flex; gap:.65rem; flex-wrap:wrap;
+  align-items:center; margin-bottom:1.2rem;
+}
+.report-controls label { margin:0; text-transform:none; letter-spacing:0; font-size:.82rem; color:var(--muted); }
+.report-controls input[type="date"] { width:auto; padding:.38rem .65rem; font-size:.82rem; }
+
+/* ── IDENTITY FOOTER ────────────────────────────────── */
+.identity-footer {
+  border-top:1px solid var(--border);
+  padding:1.4rem 0;
+  margin-top:2rem;
+  font-size:.78rem;
+  color:var(--faint);
+  line-height:1.65;
+  max-width:680px;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────── */
+@media(max-width:640px) {
+  .field-row { flex-direction:column; }
+  .app-header-actions .btn-sm:not(.keep-mobile) { display:none; }
+  .summary-row { grid-template-columns:1fr; gap:.2rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── ONBOARD SCREEN ──────────────────────────────────────── -->
+<div id="screen-onboard">
+  <div class="onboard-wrap">
+
+    <!-- WELCOME SCREEN 1 -->
+    <div id="onboard-s1">
+      <p class="brand-kicker">LOVE GONE</p>
+      <h1 class="onboard-title serif" id="onboard-title">You don't have to explain how much it hurt.</h1>
+      <p class="onboard-lead" id="onboard-lead">This tool reads what you write about your loss and maps what's actually there — what's moving, what isn't, what you're carrying, what you keep coming back to.</p>
+      <p class="onboard-lead" style="margin-top:-.5rem;">It works for any companion animal. A dog, a cat, a horse, a bird. A sudden loss, a long goodbye, or the decision you had to make and keep second-guessing. It doesn't give advice. It doesn't tell you how to grieve. It reads what you give it — nothing more.</p>
+      <div class="onboard-actions">
+        <button class="btn btn-primary" onclick="document.getElementById('onboard-s1').style.display='none'; document.getElementById('onboard-s2').style.display='block';">Next</button>
+        <button class="btn btn-sm" onclick="loadSample()">See a sample</button>
+      </div>
+    </div>
+
+    <!-- WELCOME SCREEN 2 -->
+    <div id="onboard-s2" style="display:none;">
+      <p class="brand-kicker">HOW TO USE THIS</p>
+
+      <div class="what-this-is">
+        <p><strong>1. Write a baseline.</strong> Where things actually stand. What happened. What the days look like now. Be as specific as you can — what you keep thinking about, what's hard, what you keep coming back to.</p>
+        <p><strong>2. Come back when something happens.</strong> A hard day, an anniversary, a moment that caught you off guard. Add it as a new entry.</p>
+        <p><strong>3. The map reads across time.</strong> What's moving, what's stuck, what you keep circling. There is no right pace here.</p>
+        <p><strong>A baseline might look like this:</strong><br>"She died three weeks ago. I had to make the decision and I keep wondering if I did it too soon. The house is so quiet. I keep looking for her by the door. People keep telling me it gets easier but I don't want easier right now. I just want to say what it's actually like."</p>
+        <p><em>This tool is not a substitute for professional support. It reads what you write and maps what it finds — no more. It does not diagnose, assess risk, or produce a clinical or legal finding. If you are in crisis or need immediate help, please reach out to someone who can support you directly.</em></p>
+      </div>
+
+      <div class="onboard-actions">
+        <button class="btn btn-primary" onclick="startApp()">Start</button>
+        <button class="btn btn-sm" onclick="document.getElementById('onboard-s2').style.display='none'; document.getElementById('onboard-s1').style.display='block';">Back</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ── APP SCREEN ──────────────────────────────────────────── -->
+<div id="screen-app">
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a href="index.html" style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-decoration:none;font-family:var(--font);white-space:nowrap;">&#8592; Home</a>
+      <div class="app-brand">
+        <span class="app-brand-name serif" id="header-name">Map</span>
+        <span class="app-brand-domain" id="header-domain"></span>
+      </div>
+      <div class="app-header-actions">
+        <button class="btn btn-sm keep-mobile" onclick="showTab('report'); generateReport()">Read the map</button>
+        <button class="btn btn-sm" onclick="exportData()">Export</button>
+        <button class="btn btn-sm btn-danger" onclick="clearAll()">Clear</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- crisis banner -->
+  <div id="crisis-banner" class="crisis-banner" style="width:min(960px,calc(100vw - 2rem));margin:1rem auto 0;">
+    <strong>Something you wrote may need urgent attention.</strong>
+    If you are in crisis or unsafe right now, please reach out to someone who can help — a crisis line, a trusted person, or emergency services.
+    <span id="crisis-contact-display"></span>
+  </div>
+
+  <nav class="tabs-bar" aria-label="Sections">
+    <button class="tab-btn active" onclick="showTab('baseline')">Baseline</button>
+    <button class="tab-btn" onclick="showTab('entries')">Entries</button>
+    <button class="tab-btn" onclick="showTab('corrections')">Corrections</button>
+    <button class="tab-btn" onclick="showTab('report')">Report</button>
+  </nav>
+
+  <!-- BASELINE TAB -->
+  <div id="tab-baseline" class="tab-pane active">
+    <div class="tab-content">
+      <div class="card">
+        <p class="card-title">Foundation</p>
+        <h2 class="serif" id="baseline-title">Set your baseline</h2>
+        <p id="baseline-desc">Write the starting point — where things stand right now, what is already under pressure, and what you are carrying.</p>
+        <div class="field">
+          <label for="baselineText">Your baseline</label>
+          <textarea id="baselineText" rows="10" id="baselineText" placeholder="Where are you right now? What is already under pressure? What are you carrying that you have not told anyone?"></textarea>
+        </div>
+        <div class="field">
+          <label for="crisisContactInput">Crisis contact (optional)</label>
+          <input type="text" id="crisisContactInput" placeholder="A name or number you can call if things get hard">
+          <p class="form-hint">Stored locally. Appears in the crisis notice if the map detects crisis language.</p>
+        </div>
+        <div style="display:flex;gap:.65rem;flex-wrap:wrap;margin-top:.5rem;">
+          <button class="btn btn-accent" onclick="saveBaseline()">Save baseline</button>
+          <button class="btn btn-sm" onclick="saveCrisisContact()">Save crisis contact</button>
+        </div>
+        <p class="status-msg" id="baseline-status">Saved.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENTRIES TAB -->
+  <div id="tab-entries" class="tab-pane">
+    <div class="tab-content">
+      <div class="card">
+        <p class="card-title">New entry</p>
+        <h2 class="serif" id="entry-title">Add an entry</h2>
+        <p id="entry-desc">Write what is on your mind. What happened. What you noticed. What you are carrying.</p>
+        <div class="field">
+          <label for="entryDate">Date</label>
+          <input type="date" id="entryDate">
+        </div>
+        <div class="field">
+          <label for="entryText">Entry</label>
+          <textarea id="entryText" rows="8" placeholder="What is on your mind?"></textarea>
+        </div>
+        <div style="display:flex;gap:.65rem;align-items:center;flex-wrap:wrap;">
+          <button class="btn btn-accent" onclick="addEntry()">Save entry</button>
+          <p class="status-msg" style="display:inline;" id="entry-status"></p>
+        </div>
+      </div>
+      <div class="card">
+        <p class="card-title">Previous entries</p>
+        <p class="form-hint" id="entry-count" style="margin-bottom:.75rem;">No entries yet.</p>
+        <div id="entries-list" class="entry-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CORRECTIONS TAB -->
+  <div id="tab-corrections" class="tab-pane">
+    <div class="tab-content">
+      <div class="card">
+        <p class="card-title">Govern the map</p>
+        <h2 class="serif">Corrections</h2>
+        <p>A correction tells the map something the entries do not. Mark a topic as stale, confirm something is still current, or flag what the map should weigh differently.</p>
+        <div class="field">
+          <label for="correctionText">Correction</label>
+          <textarea id="correctionText" rows="4" placeholder="e.g. The job situation has changed — treat those entries as stale. The housing is now stable. Do not read the gap in entries last week as avoidance — I was away."></textarea>
+        </div>
+        <button class="btn btn-accent" onclick="saveCorrection()">Save correction</button>
+      </div>
+      <div class="card">
+        <p class="card-title">Saved corrections</p>
+        <div id="corrections-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPORT TAB -->
+  <div id="tab-report" class="tab-pane">
+    <div class="tab-content">
+      <div class="report-controls">
+        <label>From <input type="date" id="reportStart"></label>
+        <label>To <input type="date" id="reportEnd"></label>
+        <button class="btn btn-accent btn-sm" onclick="generateReport()">Read the map</button>
+        <button class="btn btn-sm" onclick="generateExitReport()">Full arc</button>
+        <button class="btn btn-sm" onclick="LaceVGate.check(function(){ window.print(); })">Print</button>
+      </div>
+
+      <div id="report-empty" class="report-empty">
+        <p id="report-empty-desc">Add a baseline and at least one entry, then read your map.</p>
+        <button class="btn btn-sm" onclick="showTab('baseline')">Start with your baseline</button>
+      </div>
+
+      <div id="reportOutput"></div>
+
+      <div class="identity-footer">
+        This map is built from what you wrote. It cannot see what you did not give it. It reads your material and maps what it found — no more, no less. It does not diagnose, score risk, or produce a legal finding. The map is yours.
+      </div>
+    </div>
+  </div>
+
+</div><!-- end #screen-app -->
+
+
+<script>
+// ════════════════════════════════════════════════════════
+// CARTRIDGE SLOT
+// ════════════════════════════════════════════════════════
+//
+// This shell expects a cartridge object assigned to
+// window.SORTER_CARTRIDGE before the app initialises.
+//
+// Minimum shape:
+//   {
+//     id, name, tagline, desc,
+//     baselineTitle, baselineDesc, baselinePlaceholder,
+//     entryTitle, entryDesc, entryPlaceholder,
+//     reportDesc, reportEmptyDesc,
+//     crisisCheck: true|false,
+//     crisisRx: RegExp,
+//     gaps:              [{ key, name, rx, reason }],
+//     skills:            [{ key, name, rx, loadSensitive, isStructureSkill, works, breaks }],
+//     contradictions:    [{ a, b, text }],
+//     directionPatterns: [{ rx, label }],
+//     pressureSignals:   [{ key, rx, label }],
+//     stuckRx:           RegExp,
+//     sampleBaseline:    string,
+//     sampleEntries:     [{ daysAgo, text }],
+//     sampleCorrection:  string (optional),
+//   }
+//
+// When this file ships from assembly, the cartridge block
+// below is replaced with the assembled cartridge object.
+//
+// ════════════════════════════════════════════════════════
+
+// ── CARTRIDGE INJECTION POINT ─────────────────────────
+// Assembly replaces everything between these markers.
+/* CARTRIDGE_START */
+window.SORTER_CARTRIDGE = {
+  id: "grief",
+  name: "Grief Map",
+  tagline: "private · evidence-bound · non-prescriptive",
+  desc: "",
+  accent: "#4a3a2a",
+  accentLight: "#f4f0ec",
+  baselineTitle: "Set your baseline",
+  baselineDesc: "Where you are now. What has led to this point. What the current pressure looks like. The map particularly needs: the loss itself not directly named; secondary losses not described; support network not visible. Movement in this domain looks like: naming the loss directly rather than around it; allowing the grief rather than managing it away.",
+  baselinePlaceholder: "Where are you now? What has led to this point? Include: the loss itself not directly named.",
+  entryTitle: "Add an entry",
+  entryDesc: "Slow. Careful. Non-directive. Does not impose a timeline. Does not suggest what grief should look like.",
+  entryPlaceholder: "What is on your mind?",
+  reportDesc: "The map reads what is moving, stuck, and under load based on what you wrote.",
+  reportEmptyDesc: "Add a baseline and at least one entry, then read your map.",
+  crisisCheck: true,
+  crisisRx: /\b(kill myself|end my life|suicide|suicidal|I want to die|don't want to be here|hurt myself|harm myself|can't go on|not worth it|overdose)\b/i,
+  gaps: [
+    {
+      key: "loss_named",
+      name: "The loss directly named",
+      rx: /\b(I lost my dog|I lost my cat|I lost my horse|I lost my bird|I lost my rabbit|I lost my pet|I lost my companion|I had to put|I had to let him go|I had to let her go|we had him put to sleep|we had her put to sleep|I put him down|I put her down|he passed away|she passed away|they passed away|my dog died|my cat died|my horse died|my bird died|my pet died|I lost them|the death of my|the loss of my dog|the loss of my cat|the loss of my pet|she was put to sleep|he was put to sleep|I said goodbye to|I lost|they died|the death|the loss of|gone|my mother|my father|my partner|my child|my friend|the relationship ended|it ended)\b/i,
+      reason: "The loss itself needs to be named before the map can read what is happening in response to it. Without it the map is reading around something central."
+    },
+    {
+      key: "support_network",
+      name: "Support network",
+      rx: /\b(I spoke to|I have|people around me|my family|my friends|support|someone I can|I am not alone|I told|I reached out|counsellor|therapist|group)\b/i,
+      reason: "Whether the person is carrying this alone or has people around them changes what the map can read and what is most urgent."
+    },
+    {
+      key: "functional_impact",
+      name: "Functional impact",
+      rx: /\b(I cannot work anymore|I have not eaten properly|I have not slept properly|I have not slept since|I cannot function|I have stopped everything|I keep looking for her|I keep looking for him|I still set her bowl|I still set his bowl|the house is so quiet|I keep expecting to hear|I look for her at the door|I look for him at the door|I keep going to where she|I keep going to where he|I reach for him in|I reach for her in|his spot on the|her spot on the|I still reach down|I keep thinking I hear|I turned to tell her|I turned to tell him|I cannot work|I have not eaten|I have not slept|I cannot function|basic things|I have stopped|I am not leaving|I cannot concentrate|I have not)\b/i,
+      reason: "Grief affecting basic function — sleep, eating, work, leaving the house — is a different read from grief that is painful but not disabling. The distinction matters."
+    },
+    {
+      key: "what_person_needs",
+      name: "What the person needs",
+      rx: /\b(I need someone to|I need to talk|I need help with|I need support|I need to understand|I need to know|what would help me|what I want is to|I am looking for someone|I wish I could|what I need is|the thing that would help|if only I could|I need to find a way|I just need)\b/i,
+      reason: "Feelings are often clear in grief. What the person actually needs is often not named. That gap is where the most useful next entries sit."
+    },
+    {
+      key: "direction",
+      name: "Any sense of direction",
+      rx: /\b(I want to get through this|I want to find a way|I want to carry this|I want to honour|eventually I hope|at some point I want|one day I hope|I am trying to find|I am working toward|finding my way through|getting through this|I want to remember|I want to feel okay again|I want to make sense of this|I hope I can)\b/i,
+      reason: "Direction in grief is not the same as resolution. Any sense of what the person is moving toward — however tentative — helps the map read whether the current period is acute, extended, or beginning to shift."
+    }
+  ],
+  skills: [
+    {
+      key: "naming_the_loss",
+      name: "Naming the loss directly",
+      rx: /\b(I said it|I named it|I spoke about|I told someone|I wrote about|I allowed myself to|I said out loud|I acknowledged|I accepted that)\b/i,
+      loadSensitive: false,
+      isStructureSkill: true,
+      works: "Naming the loss directly rather than writing around it — which is the beginning of being able to carry it rather than avoid it.",
+      breaks: "The loss stays unnamed across multiple entries — the map is reading the shape of avoidance without being able to say what is being avoided."
+    },
+    {
+      key: "seeking_support",
+      name: "Seeking or accepting support",
+      rx: /\b(I asked for help|I accepted help|I reached out for support|I called a helpline|I went to a grief|I spoke to someone about the loss|I spoke to the vet about|I talked to the vet about|I told someone about|I let them support me|I allowed myself to be helped|I received support|I have support around me|I joined a pet loss|I found a pet loss|I found a bereavement|I spoke to the vet nurse|pet bereavement|grief support for pet|Rainbow Bridge community|I asked for|I accepted|I reached out|I called|I went to|I spoke to|I told them|I let them|I allowed|I received|I have support)\b/i,
+      loadSensitive: true,
+      isStructureSkill: false,
+      works: "Reaching toward others — friends, family, professionals — rather than carrying the grief entirely alone.",
+      breaks: "Isolation reasserts under load — the person withdraws from available support and carries more alone than is sustainable."
+    },
+    {
+      key: "self_care",
+      name: "Basic self-care",
+      rx: /\b(I ate|I slept|I went outside|I moved|I showered|I got dressed|I left the house|I made myself|I managed to|basic things|I kept)\b/i,
+      loadSensitive: true,
+      isStructureSkill: false,
+      works: "Maintaining basic self-care — eating, sleeping, moving — during a period when these things require effort.",
+      breaks: "Acute grief or a hard period causes self-care to stop — the person is not eating, sleeping, or leaving the house."
+    },
+    {
+      key: "allowing_grief",
+      name: "Allowing the grief",
+      rx: /\b(I finally cried|I let myself cry|I cried properly|I allowed myself to cry|I let myself feel it|I allowed the grief|I did not push it away|I sat with the grief|I gave myself permission|I grieved properly|I felt it properly|I let it come|I did not try to stop the tears|I talked to her photo|I talked to his photo|I visited where we buried|I let myself look at photos of her|I let myself look at photos of him|I sat in his spot|I sat in her spot|I held her collar|I held his collar|I kept his things out|I kept her things out|I went to where we used to walk|I cried|I let myself|I allowed|I did not push it away|I sat with|I gave myself|I grieved|I felt it|I let it|I did not try to stop)\b/i,
+      loadSensitive: false,
+      isStructureSkill: false,
+      works: "Allowing the grief to be present rather than managing it away — which is what allows it to move at its own pace.",
+      breaks: "The pressure to cope or appear functional causes the grief to be suppressed — it accumulates rather than moving."
+    }
+  ],
+  contradictions: [
+    {
+      a: /\b(I am okay|I am managing|I am fine|I am getting on with things|I am coping|I am doing alright|I am okay really)\b/i,
+      b: /\b(I cannot|I have not|I broke down|I am not sleeping|I am not eating|I have stopped|I cannot function|it hit me|I fell apart|I am struggling)\b/i,
+      text: "A stated sense of coping and described difficulty functioning both appear. In grief these often coexist — the presented surface and the actual experience are not the same thing. The map holds both without deciding which is true. Both can be true at once."
+    },
+    {
+      a: /\b(I want to move on|I need to get past this|I should be over it|it has been long enough|I need to move forward)\b/i,
+      b: /\b(I still|I keep|it comes back|I miss|I think about|I cannot stop|the grief|it is still|it has not gone|I am still)\b/i,
+      text: "A stated desire to move on and the continuing presence of the grief both appear. The desire to be past it and the reality of still being in it are not a contradiction — they are the shape of grief. The map holds both. There is no timeline that applies here."
+    },
+    {
+      a: /\b(I loved them|I miss them|I would do anything|they meant everything|I cannot imagine|they were everything)\b/i,
+      b: /\b(relief|relieved|it is over|better off|free|the burden|it was hard|the end was|glad that|I feel guilty because I feel)\b/i,
+      text: "Love or deep attachment and relief or ambivalence both appear. These are not opposites in grief — they are both real and both valid. The map holds them without resolving the tension. Guilt about the relief is common and does not require explanation."
+    },
+    {
+      a: /\b(I know I did the right thing for her|I know I did the right thing for him|it was the right decision for her|it was the right decision for him|I did what was best for her|I did what was best for him|I had no choice but to let her go|I had no choice but to let him go|the vet said it was time|I know she was suffering|I know he was suffering|she went peacefully|he went peacefully|it was a peaceful end)\b/i,
+      b: /\b(I keep wondering if I was wrong to|I keep asking if I should have waited|I still feel guilty about putting|I should have waited longer before|what if there was more time for|I keep replaying the moment I|did I do it too soon for her|did I do it too soon for him|was it really the right time to|I blame myself for the decision|I keep second-guessing whether)\b/i,
+      text: "A statement that the decision was right or necessary and guilt or second-guessing about that same decision both appear. This is the most common and most painful pattern in pet loss — knowing intellectually that it was the right thing and feeling guilt anyway. The map holds both without resolving either. The guilt does not mean the decision was wrong. Both can be true at once."
+    }
+  ],
+  directionPatterns: [
+    {
+      rx: /carry it|live with it|learn to carry|hold it|make room for/i,
+      label: "toward carrying the loss rather than resolving it"
+    },
+    {
+      rx: /return to|get back to|resume|pick up|reconnect|back to/i,
+      label: "toward returning to suspended life"
+    },
+    {
+      rx: /honour|remember|mark|memorial|legacy|keep their memory/i,
+      label: "toward honouring the loss"
+    },
+    {
+      rx: /support|help others|understand|use this|meaning|something from/i,
+      label: "toward finding meaning"
+    },
+    {
+      rx: /get through|survive|just get through|one day at a time|keep going/i,
+      label: "toward getting through the current period"
+    }
+  ],
+  pressureSignals: [],
+  stuckRx: /\b(same thing|going in circles|nothing changes|same pattern|no progress|still the same|back to square one|what is the point|nothing moves)\b/i,
+  sampleBaseline: "My mother died six weeks ago. She had been ill for a long time but it still didn't feel real when it happened. I am back at work. I am doing the things I am supposed to do. My sister is around but we are both carrying it separately — we don't really talk about it. I have friends who have checked in but I keep telling them I am fine. I don't know what I need. I just know that something is very wrong and I cannot name it properly yet.",
+  sampleEntries: [
+    {
+      daysAgo: 18,
+      text: "I got through the week. I am managing. Work is actually helping in a way — it gives me somewhere to put myself. I ate today, I slept last night. Basic things. But I cried on the way home on Tuesday and I didn't try to stop it. I just let it come. I don't know if that is progress or just what happens now."
+    },
+    {
+      daysAgo: 11,
+      text: "I am not okay. I said I was fine to my friend again today and I don't know why I keep doing that. I have not slept properly in four days. I keep thinking about small things — the way she answered the phone, the specific smell of her house. I cannot concentrate on anything for more than a few minutes. I should be further along than this. People keep saying I am doing so well and I want to scream."
+    },
+    {
+      daysAgo: 4,
+      text: "I called my sister. We didn't talk about mum directly but it was the first time I had reached out to anyone. It helped more than I expected. I told her I wasn't doing as well as I'd been saying. She said the same. I don't know what getting through this looks like but I want to get through it. One day at a time I suppose."
+    },
+  ],
+};
+/* CARTRIDGE_END */
+
+
+// ════════════════════════════════════════════════════════
+// MERCATOR ENGINE  v3.0.2 (embedded)
+// ════════════════════════════════════════════════════════
+
+const MercatorEngine = (() => {
+
+  let _cartridge = null;
+  let _state = {
+    baseline: '', crisisContact: '', entries: [],
+    corrections: [], connections: [],
+    exitReportGenerated: false,
+    crisisPaused: false, crisisResumedAt: null,
+  };
+
+  // ── Helpers ──────────────────────────────────────────
+  const todayISO   = () => new Date().toISOString().slice(0,10);
+  const daysAgoISO = n  => { const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); };
+  const daysBetween= (a,b) => Math.abs((new Date(a)-new Date(b))/86400000);
+  const escapeHTML = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  const shorten    = (s,n) => s.length>n?s.slice(0,n-1)+'…':s;
+  const uid        = () => Math.random().toString(36).slice(2,9);
+  const safe       = escapeHTML;
+
+  function _testRx(rx, text) {
+    if (!rx) return false;
+    try { return (rx instanceof RegExp ? rx : new RegExp(rx.source||rx, rx.flags||'i')).test(text); }
+    catch(e) { return false; }
+  }
+
+  // ── State management ─────────────────────────────────
+  function mountCartridge(c) { _cartridge = c; }
+  function getCartridge()     { return _cartridge; }
+  function getState()         { return { ..._state, entries:[..._state.entries], corrections:[..._state.corrections] }; }
+
+  function saveBaseline(text) {
+    _state.baseline = text;
+    _persist();
+  }
+  function saveCrisisContact(c) {
+    _state.crisisContact = c;
+    _persist();
+  }
+  function addEntry(date, text) {
+    _state.entries.push({ id: uid(), date, text, flagged: false, createdAt: new Date().toISOString() });
+    _persist();
+    _checkCrisis(text);
+  }
+  function editEntry(id, text) {
+    const e = _state.entries.find(e=>e.id===id);
+    if (e) { e.text = text; e.editedAt = new Date().toISOString(); }
+    _persist();
+  }
+  function deleteEntry(id) {
+    _state.entries = _state.entries.filter(e=>e.id!==id);
+    _persist();
+  }
+  function toggleFlag(id) {
+    const e = _state.entries.find(e=>e.id===id);
+    if (e) e.flagged = !e.flagged;
+    _persist();
+  }
+  function addCorrection(text) {
+    _state.corrections.push({ id: uid(), date: todayISO(), text });
+    _persist();
+  }
+  function deleteCorrection(id) {
+    _state.corrections = _state.corrections.filter(c=>c.id!==id);
+    _persist();
+  }
+  function clearAll() {
+    _state = { baseline:'', crisisContact:'', entries:[], corrections:[], connections:[], exitReportGenerated:false, crisisPaused:false, crisisResumedAt:null };
+    _persist();
+  }
+  function exportJSON() {
+    return JSON.stringify({ cartridge: _cartridge?.id, exportedAt: new Date().toISOString(), state: _state }, null, 2);
+  }
+  function loadSample() {
+    if (!_cartridge) return;
+    const c = _cartridge;
+    _state.baseline = c.sampleBaseline || '';
+    _state.crisisContact = '';
+    _state.entries = (c.sampleEntries||[]).map(e=>({
+      id: uid(),
+      date: daysAgoISO(e.daysAgo || 0),
+      text: e.text,
+      flagged: false,
+      createdAt: new Date().toISOString(),
+    }));
+    _state.corrections = c.sampleCorrection
+      ? [{ id: uid(), date: todayISO(), text: c.sampleCorrection }]
+      : [];
+    _persist();
+  }
+
+  // ── Persistence ──────────────────────────────────────
+  function _persist() {
+    try {
+      localStorage.setItem('sorter-map-' + (_cartridge?.id||'default'), JSON.stringify(_state));
+    } catch(e) {}
+  }
+  function _restore() {
+    try {
+      const saved = localStorage.getItem('sorter-map-' + (_cartridge?.id||'default'));
+      if (saved) { const p = JSON.parse(saved); Object.assign(_state, p); }
+    } catch(e) {}
+  }
+
+  // ── Crisis check ─────────────────────────────────────
+  function _checkCrisis(text) {
+    if (!_cartridge?.crisisCheck || !_cartridge?.crisisRx) return;
+    if (_testRx(_cartridge.crisisRx, text)) {
+      const banner = document.getElementById('crisis-banner');
+      if (banner) {
+        const contact = _state.crisisContact;
+        const contactEl = document.getElementById('crisis-contact-display');
+        if (contactEl && contact) contactEl.textContent = ' ' + contact;
+        banner.style.display = 'block';
+      }
+    }
+  }
+
+  // ── Analysis core ────────────────────────────────────
+
+  function _allText(entries) { return entries.map(e=>e.text||'').join('\n'); }
+
+  function _independentDays(entries, rx) {
+    const days = new Set();
+    entries.forEach(e => {
+      if (_testRx(rx, e.text||'') && e.date) days.add(e.date.slice(0,10));
+    });
+    return days.size;
+  }
+
+  function _confidenceTier(independentDays, entryCount) {
+    if (entryCount === 0)           return 'not_readable';
+    if (independentDays >= 5)       return 'strong';
+    if (independentDays >= 3)       return 'supported';
+    if (independentDays >= 2)       return 'partial';
+    if (independentDays === 1)      return 'thin';
+    if (entryCount > 0)             return 'inferred';
+    return 'not_readable';
+  }
+
+  function _readGaps(baseline, entries) {
+    const gaps = _cartridge?.gaps || [];
+    const allText = _allText(entries);
+    const open = [];
+    gaps.forEach(g => {
+      const inBaseline = _testRx(g.rx, baseline);
+      const inEntries  = _testRx(g.rx, allText);
+      if (!inBaseline && !inEntries) {
+        open.push(g);
+      }
+    });
+    return open;
+  }
+
+  function _readSkills(entries) {
+    const skills = _cartridge?.skills || [];
+    const allText = _allText(entries);
+    const present = [], absent = [], loadSensitivePresent = [];
+    skills.forEach(s => {
+      const days = _independentDays(entries, s.rx);
+      if (days > 0) {
+        present.push({ ...s, independentDays: days });
+        if (s.loadSensitive) loadSensitivePresent.push(s);
+      } else if (_testRx(s.rx, allText) === false) {
+        absent.push(s);
+      }
+    });
+    return { present, absent, loadSensitivePresent };
+  }
+
+  function _readContradictions(baseline, entries) {
+    const contradictions = _cartridge?.contradictions || [];
+    const allText = baseline + '\n' + _allText(entries);
+    const found = [];
+    contradictions.forEach(c => {
+      if (_testRx(c.a, allText) && _testRx(c.b, allText)) {
+        found.push(c);
+      }
+    });
+    return found;
+  }
+
+  function _readDirection(baseline, entries) {
+    const patterns = _cartridge?.directionPatterns || [];
+    const allText  = baseline + '\n' + _allText(entries);
+    const found = [];
+    patterns.forEach(p => {
+      if (_testRx(p.rx, allText)) found.push(p.label);
+    });
+    return found;
+  }
+
+  function _readPressure(entries) {
+    const signals = _cartridge?.pressureSignals || [];
+    const allText = _allText(entries);
+    const found = [];
+    signals.forEach(s => {
+      if (_testRx(s.rx, allText)) found.push(s.label);
+    });
+    return found;
+  }
+
+  function _readMovement(entries) {
+    if (!entries.length) return { isMoving: false, signals: [], independentDays: 0 };
+    // Use skills as movement evidence
+    const skills = _cartridge?.skills || [];
+    let totalDays = 0;
+    const signals = [];
+    skills.forEach(s => {
+      const days = _independentDays(entries, s.rx);
+      if (days > 0) {
+        signals.push(s.name);
+        totalDays += days;
+      }
+    });
+    return {
+      isMoving: signals.length > 0,
+      signals,
+      independentDays: Math.min(totalDays, entries.length),
+    };
+  }
+
+  function _readStuck(entries) {
+    const rx = _cartridge?.stuckRx;
+    if (!rx) return { signals: [] };
+    const allText = _allText(entries);
+    return { signals: _testRx(rx, allText) ? ['Stuck language present.'] : [] };
+  }
+
+  function _overallConfidence(openGaps, movement, entries) {
+    const n = entries.length;
+    if (n === 0) return 'not_readable';
+    if (openGaps.length >= 4) return 'thin';
+    if (movement.independentDays >= 3 && openGaps.length <= 1) return 'supported';
+    if (movement.independentDays >= 2) return 'partial';
+    if (n > 0 && openGaps.length <= 2) return 'partial';
+    return 'thin';
+  }
+
+  function _nextUsefulMove(openGaps, movement, stuck, pressure) {
+    if (openGaps.length > 0) {
+      const g = openGaps[0];
+      return g.reason
+        ? `Address the open gap: ${g.reason}`
+        : `Name what is not yet described: ${g.name}.`;
+    }
+    if (stuck.signals.length > 0) return 'The map is reading a stuck pattern. Name specifically what has not moved and what is getting in the way.';
+    if (pressure.length > 0) return `Pressure is active (${pressure[0]}). Name what that pressure is doing to the map — what it is stopping or changing.`;
+    if (movement.isMoving) return 'Movement is visible. The next entry should describe what the movement is building toward, not just that it is happening.';
+    return 'Add honest material — the map cannot produce a reliable next move yet.';
+  }
+
+  // ── Report rendering ─────────────────────────────────
+
+  function _confidenceBadge(level) {
+    const labels = {
+      strong: 'strong read', supported: 'supported', partial: 'partial',
+      thin: 'thin', inferred: 'inferred', not_readable: 'not readable',
+    };
+    return `<span class="confidence-badge ${level}">${labels[level]||level}</span>`;
+  }
+
+  function _renderBlock(title, items, cls='') {
+    if (!items.length) return '';
+    const itemsHTML = items.map(i=>`<div class="report-item ${cls}">${safe(i)}</div>`).join('');
+    return `<div class="report-block">
+      <p class="report-block-title">${safe(title)}</p>
+      ${itemsHTML}
+    </div>`;
+  }
+
+  function generateReport(start, end, outputEl, emptyEl) {
+    const entries = _state.entries.filter(e => {
+      if (!e.date) return true;
+      if (start && e.date < start) return false;
+      if (end   && e.date > end)   return false;
+      return true;
+    });
+
+    if (!_state.baseline && !entries.length) {
+      if (emptyEl) { emptyEl.style.display='flex'; outputEl.style.display='none'; }
+      return;
+    }
+
+    const baseline     = _state.baseline || '';
+    const openGaps     = _readGaps(baseline, entries);
+    const skills       = _readSkills(entries);
+    const contradictions = _readContradictions(baseline, entries);
+    const directions   = _readDirection(baseline, entries);
+    const pressure     = _readPressure(entries);
+    const movement     = _readMovement(entries);
+    const stuck        = _readStuck(entries);
+    const confidence   = _overallConfidence(openGaps, movement, entries);
+    const nextMove     = _nextUsefulMove(openGaps, movement, stuck, pressure);
+    const corrections  = _state.corrections;
+
+    let html = '';
+
+    // Summary capstone
+    const movementSummary = movement.signals.length
+      ? movement.signals.slice(0,3).join(', ')
+      : 'Not yet visible — more entries needed.';
+    const gapSummary = openGaps.length
+      ? openGaps.map(g=>g.name).slice(0,3).join(', ')
+      : 'No critical gaps detected.';
+    const directionSummary = directions.length ? directions[0] : 'Not yet stated.';
+    const pressureSummary  = pressure.length ? pressure.slice(0,2).join(', ') : 'Not visible in current entries.';
+
+    html += `<div class="summary-capstone">
+      <p class="summary-title">Current read</p>
+      <div class="summary-row"><strong>Movement</strong><span>${safe(movementSummary)}</span></div>
+      <div class="summary-row"><strong>Load</strong><span>${safe(pressureSummary)}</span></div>
+      <div class="summary-row"><strong>Main gap</strong><span>${safe(gapSummary)}</span></div>
+      <div class="summary-row"><strong>Direction</strong><span>${safe(directionSummary)}</span></div>
+      <div class="summary-row"><strong>Confidence</strong><span>${_confidenceBadge(confidence)}</span></div>
+    </div>`;
+
+    // Corrections applied notice
+    if (corrections.length) {
+      html += `<div class="report-block">
+        <p class="report-block-title">Corrections applied</p>
+        ${corrections.map(c=>`<div class="report-item">${safe(c.date)} — ${safe(c.text)}</div>`).join('')}
+      </div>`;
+    }
+
+    // What is moving
+    if (movement.signals.length) {
+      html += `<div class="report-block">
+        <p class="report-block-title">What is moving</p>
+        ${movement.signals.map(s=>`<div class="report-item moving">${safe(s)}</div>`).join('')}
+      </div>`;
+    } else {
+      html += `<div class="report-block">
+        <p class="report-block-title">What is moving</p>
+        <div class="report-item">Movement is not yet visible in the current entries. The map needs more material to read this.</div>
+      </div>`;
+    }
+
+    // Stuck
+    if (stuck.signals.length) {
+      html += `<div class="report-block">
+        <p class="report-block-title">What is not moving</p>
+        <div class="report-item warn">Stuck language is present in the material. Something is not moving — the entries describe circling or repetition.</div>
+      </div>`;
+    }
+
+    // Pressure
+    if (pressure.length) {
+      html += _renderBlock('What is under load', pressure, 'warn');
+    }
+
+    // Direction
+    if (directions.length) {
+      html += _renderBlock('Direction visible', directions, 'moving');
+    }
+
+    // Contradictions
+    if (contradictions.length) {
+      html += `<div class="report-block">
+        <p class="report-block-title">Unresolved tensions</p>
+        ${contradictions.map(c=>`<div class="report-item held">${safe(c.text)}</div>`).join('')}
+      </div>`;
+    }
+
+    // Skills present
+    if (skills.present.length) {
+      html += `<div class="report-block">
+        <p class="report-block-title">Skills visible in the material</p>
+        ${skills.present.map(s=>`<div class="report-item moving">
+          <strong>${safe(s.name)}</strong> — ${safe(s.works)}
+          ${_confidenceBadge(_confidenceTier(s.independentDays, entries.length))}
+        </div>`).join('')}
+      </div>`;
+    }
+
+    // Open gaps
+    if (openGaps.length) {
+      html += `<div class="report-block">
+        <p class="report-block-title">Open gaps</p>
+        ${openGaps.map(g=>`<div class="gap-notice">
+          <strong>${safe(g.name)}</strong> — ${safe(g.reason)}
+        </div>`).join('')}
+      </div>`;
+    }
+
+    // Next useful move
+    html += `<div class="next-move-block">
+      <p class="report-block-title">Next useful move</p>
+      <p>${safe(nextMove)}</p>
+    </div>`;
+
+    // Map confidence and limits
+    html += `<div class="report-block">
+      <p class="report-block-title">Map confidence and limits</p>
+      <div class="report-item">Overall: ${_confidenceBadge(confidence)}</div>
+      <div class="report-item">Based on ${entries.length} entr${entries.length===1?'y':'ies'} in the selected period.</div>
+      ${openGaps.length ? `<div class="report-item gap">${openGaps.length} open gap${openGaps.length>1?'s':''} — the map cannot read what was not written.</div>` : ''}
+      <div class="report-item">This map reads what was written. It cannot see what was held back. It does not diagnose, assess risk, or produce a legal finding.</div>
+    </div>`;
+
+    if (emptyEl) emptyEl.style.display = 'none';
+    outputEl.style.display = 'block';
+    outputEl.innerHTML = html;
+  }
+
+  function generateExitReport(outputEl) {
+    generateReport(null, null, outputEl, null);
+  }
+
+  // ── Public API ───────────────────────────────────────
+  return {
+    mountCartridge, getCartridge, getState,
+    saveBaseline, saveCrisisContact,
+    addEntry, editEntry, deleteEntry, toggleFlag,
+    addCorrection, deleteCorrection,
+    clearAll, exportJSON, loadSample,
+    generateReport, generateExitReport,
+    escapeHTML, shorten,
+    restore: _restore,
+  };
+
+})();
+
+
+// ════════════════════════════════════════════════════════
+// SHELL APP
+// ════════════════════════════════════════════════════════
+
+(function(){
+  const $ = id => document.getElementById(id);
+
+  function todayISO() { return new Date().toISOString().slice(0,10); }
+  function daysAgoISO(n){ const d=new Date(); d.setDate(d.getDate()-n); return d.toISOString().slice(0,10); }
+  const safe = s => MercatorEngine.escapeHTML(String(s||''));
+
+  // ── Boot ─────────────────────────────────────────────
+  function boot() {
+    const cartridge = window.SORTER_CARTRIDGE;
+
+    if (!cartridge) {
+      // Dev fallback — show error
+      document.body.innerHTML = `<div style="padding:2rem;font-family:sans-serif;color:#8b1f1f;">
+        <h2>No cartridge loaded</h2>
+        <p style="margin-top:.75rem;color:#555;">This shell requires a cartridge object assigned to <code>window.SORTER_CARTRIDGE</code>.</p>
+      </div>`;
+      return;
+    }
+
+    MercatorEngine.mountCartridge(cartridge);
+    MercatorEngine.restore();
+
+    // Apply cartridge copy
+    if (cartridge.name) {
+      document.title = `LACE V · ${cartridge.name}`;
+      $('onboard-title').textContent   = cartridge.name;
+      $('header-name').textContent     = cartridge.name;
+    }
+    if (cartridge.tagline)      $('header-domain').textContent   = cartridge.tagline;
+    if (cartridge.desc)         $('onboard-lead').textContent    = cartridge.desc;
+    if (cartridge.baselineTitle)  $('baseline-title').textContent = cartridge.baselineTitle;
+    if (cartridge.baselineDesc)   $('baseline-title').nextElementSibling.textContent = cartridge.baselineDesc;
+    if (cartridge.baselinePlaceholder) $('baselineText').placeholder = cartridge.baselinePlaceholder;
+    if (cartridge.entryTitle)   $('entry-title').textContent    = cartridge.entryTitle;
+    if (cartridge.entryDesc)    $('entry-title').nextElementSibling.textContent = cartridge.entryDesc;
+    if (cartridge.entryPlaceholder)  $('entryText').placeholder = cartridge.entryPlaceholder;
+    if (cartridge.reportEmptyDesc)   $('report-empty-desc').textContent = cartridge.reportEmptyDesc;
+
+    // Accent colour
+    if (cartridge.accent) {
+      document.documentElement.style.setProperty('--accent', cartridge.accent);
+    }
+    if (cartridge.accentLight) {
+      document.documentElement.style.setProperty('--accent-light', cartridge.accentLight);
+    }
+
+    // Restore UI state
+    const st = MercatorEngine.getState();
+    if (st.baseline) $('baselineText').value = st.baseline;
+    if (st.crisisContact) $('crisisContactInput').value = st.crisisContact;
+    $('entryDate').value = todayISO();
+    $('reportStart').value = daysAgoISO(14);
+    $('reportEnd').value = todayISO();
+    renderEntries();
+    renderCorrections();
+
+    $('screen-onboard').style.display = 'flex';
+  }
+
+  // ── Navigation ───────────────────────────────────────
+  function startApp() {
+    $('screen-onboard').style.display = 'none';
+    $('screen-app').style.display = 'block';
+  }
+
+  function showTab(id) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    const pane = $('tab-' + id);
+    if (pane) pane.classList.add('active');
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      if (b.textContent.toLowerCase().includes(id) ||
+          (id==='report' && b.textContent.toLowerCase().includes('report')) ||
+          (id==='baseline' && b.textContent.toLowerCase().includes('baseline')) ||
+          (id==='entries' && b.textContent.toLowerCase().includes('entr')) ||
+          (id==='corrections' && b.textContent.toLowerCase().includes('correct'))) {
+        b.classList.add('active');
+      }
+    });
+  }
+
+  // ── Actions ──────────────────────────────────────────
+  function saveBaseline() {
+    MercatorEngine.saveBaseline($('baselineText').value.trim());
+    const s = $('baseline-status');
+    s.textContent = 'Thank you — come back and edit this anytime if you remember anything more.'; s.style.display = 'block';
+    setTimeout(() => s.style.display='none', 2000);
+  }
+
+  function saveCrisisContact() {
+    MercatorEngine.saveCrisisContact(($('crisisContactInput')?.value||'').trim());
+  }
+
+  function addEntry() {
+    const text = $('entryText').value.trim();
+    if (!text) return;
+    MercatorEngine.addEntry($('entryDate').value || todayISO(), text);
+    $('entryText').value = '';
+    const s = $('entry-status');
+    s.textContent = 'Thank you — come back and edit this anytime if you remember anything more.'; s.style.display = 'inline';
+    setTimeout(() => s.style.display='none', 2000);
+    renderEntries();
+  }
+
+  function saveCorrection() {
+    const text = $('correctionText').value.trim();
+    if (!text) return;
+    MercatorEngine.addCorrection(text);
+    $('correctionText').value = '';
+    renderCorrections();
+  }
+
+  function deleteEntry(id) {
+    if (confirm('Delete this entry?')) { MercatorEngine.deleteEntry(id); renderEntries(); }
+  }
+  function toggleFlag(id) { MercatorEngine.toggleFlag(id); renderEntries(); }
+  function deleteCorrection(id) { MercatorEngine.deleteCorrection(id); renderCorrections(); }
+
+  function startEdit(id) {
+    const entry = MercatorEngine.getState().entries.find(e=>e.id===id);
+    if (!entry) return;
+    const item = $('entry-' + id);
+    if (!item) return;
+    item.querySelector('.entry-text').innerHTML = `<textarea class="entry-edit-area" rows="5" style="width:100%;margin-bottom:.5rem;">${safe(entry.text)}</textarea>`;
+    item.querySelector('.entry-actions').innerHTML = `
+      <button class="btn btn-sm btn-accent" onclick="window._Shell.saveEdit('${id}')">Save</button>
+      <button class="btn btn-sm" onclick="window._Shell.renderEntries()">Cancel</button>`;
+  }
+  function saveEdit(id) {
+    const item = $('entry-'+id);
+    const val = item?.querySelector('.entry-edit-area')?.value.trim();
+    if (!val) return;
+    MercatorEngine.editEntry(id, val);
+    renderEntries();
+  }
+
+  function exportData() {
+    LaceVGate.check(function() {
+      const json = MercatorEngine.exportJSON();
+      const blob = new Blob([json], {type:'application/json'});
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url;
+      a.download = `love-gone-map-${MercatorEngine.getCartridge()?.id||'export'}-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  function clearAll() {
+    if (confirm('Clear all data? This cannot be undone.')) {
+      MercatorEngine.clearAll();
+      $('baselineText').value = '';
+      $('crisisContactInput').value = '';
+      renderEntries();
+      renderCorrections();
+      $('reportOutput').style.display = 'none';
+      $('report-empty').style.display = 'flex';
+    }
+  }
+
+  function loadSample() {
+    MercatorEngine.loadSample();
+    const st = MercatorEngine.getState();
+    $('baselineText').value = st.baseline || '';
+    renderEntries();
+    renderCorrections();
+    startApp();
+    showTab('report');
+    generateReport();
+  }
+
+  function generateReport() {
+    const start = $('reportStart').value || daysAgoISO(14);
+    const end   = $('reportEnd').value   || todayISO();
+    MercatorEngine.generateReport(start, end, $('reportOutput'), $('report-empty'));
+  }
+
+  function generateExitReport() {
+    $('reportOutput').style.display = 'block';
+    $('report-empty').style.display = 'none';
+    MercatorEngine.generateExitReport($('reportOutput'));
+  }
+
+  // ── Render helpers ───────────────────────────────────
+  function renderEntries() {
+    const st     = MercatorEngine.getState();
+    const list   = $('entries-list');
+    const count  = $('entry-count');
+    if (count) count.textContent = `${st.entries.length} entr${st.entries.length===1?'y':'ies'}`;
+    if (!list) return;
+    const sorted = [...st.entries].sort((a,b)=>b.date.localeCompare(a.date));
+    if (!sorted.length) { list.innerHTML = '<p class="empty-note">No entries yet.</p>'; return; }
+    list.innerHTML = sorted.map(e => `<div class="entry-item ${e.flagged?'flagged':''}" id="entry-${safe(e.id)}">
+      <div class="entry-meta">
+        <strong>${safe(e.date)}</strong>
+        ${e.flagged ? '<span>Significant</span>' : ''}
+        ${e.editedAt ? '<span>edited</span>' : ''}
+      </div>
+      <div class="entry-text">${safe(MercatorEngine.shorten(e.text, 280))}</div>
+      <div class="entry-actions">
+        <button class="btn btn-sm" onclick="window._Shell.startEdit('${safe(e.id)}')">Edit</button>
+        <button class="btn btn-sm" onclick="window._Shell.toggleFlag('${safe(e.id)}')">${e.flagged?'★ Significant':'☆ Mark'}</button>
+        <button class="btn btn-sm btn-danger" onclick="window._Shell.deleteEntry('${safe(e.id)}')">Delete</button>
+      </div>
+    </div>`).join('');
+  }
+
+  function renderCorrections() {
+    const st   = MercatorEngine.getState();
+    const list = $('corrections-list');
+    if (!list) return;
+    if (!st.corrections.length) { list.innerHTML = '<p class="empty-note">No corrections yet.</p>'; return; }
+    list.innerHTML = st.corrections.map(c => `<div class="correction-item">
+      <div>
+        <span class="correction-date">${safe(c.date)}</span>
+        <div style="margin-top:.3rem;">${safe(c.text)}</div>
+      </div>
+      <button class="btn btn-sm btn-danger" onclick="window._Shell.deleteCorrection('${safe(c.id)}')">Delete</button>
+    </div>`).join('');
+  }
+
+  // ── Public surface (for inline event handlers) ───────
+  window._Shell = {
+    startApp, showTab,
+    saveBaseline, saveCrisisContact,
+    addEntry, saveCorrection,
+    deleteEntry, toggleFlag, deleteCorrection,
+    startEdit, saveEdit, renderEntries,
+    exportData, clearAll, loadSample,
+    generateReport, generateExitReport,
+  };
+
+  // Also expose named functions directly for button onclick attrs
+  window.startApp          = startApp;
+  window.showTab           = showTab;
+  window.saveBaseline      = saveBaseline;
+  window.saveCrisisContact = saveCrisisContact;
+  window.addEntry          = addEntry;
+  window.saveCorrection    = saveCorrection;
+  window.deleteEntry       = deleteEntry;
+  window.toggleFlag        = toggleFlag;
+  window.deleteCorrection  = deleteCorrection;
+  window.exportData        = exportData;
+  window.clearAll          = clearAll;
+  window.loadSample        = loadSample;
+  window.generateReport    = generateReport;
+  window.generateExitReport = generateExitReport;
+
+  document.addEventListener('DOMContentLoaded', boot);
+})();
+</script>
+
+<script src="lacev-payment-gate.js"></script>
+</body>
+</html>

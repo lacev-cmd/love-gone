@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How it works — Love Gone</title>
+<meta name="description" content="How Love Gone reads your grief and maps what's actually there — without a timeline, without judgement.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:       #2A2420;
+    --bg-mid:   #231F1C;
+    --bg-surf:  #2F2925;
+    --accent:   #C4965A;
+    --ink:      #F0EBE3;
+    --mid:      #A89880;
+    --muted:    #8A7060;
+    --border:   #3D3530;
+    --font:     'Inter', ui-sans-serif, sans-serif;
+    --serif:    'Lora', Georgia, serif;
+  }
+  body { background: var(--bg); font-family: var(--font); color: var(--ink); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  a { text-decoration: none; color: inherit; }
+
+  nav { padding: 1.1rem 2.5rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+  .logo-wrap { display: flex; flex-direction: column; gap: 2px; }
+  .logo-name { font-size: 13px; font-weight: 500; letter-spacing: 0.2em; color: var(--accent); text-transform: uppercase; }
+  .logo-sub  { font-size: 9px; letter-spacing: 0.18em; color: var(--muted); text-transform: uppercase; }
+  .nav-link  { font-size: 12px; color: var(--muted); letter-spacing: 0.06em; transition: color 0.15s; }
+  .nav-link:hover { color: var(--mid); }
+
+  .strip { background: var(--bg-mid); border-bottom: 1px solid var(--border); padding: 0.4rem 2.5rem; font-size: 11px; letter-spacing: 0.12em; color: var(--muted); }
+
+  .panel { max-width: 620px; margin: 0 auto; padding: 3.5rem 2rem; }
+  .panel + .panel { border-top: 1px solid var(--border); }
+  .panel-label { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.25rem; }
+
+  .panel h1 { font-family: var(--serif); font-size: 34px; font-weight: 400; color: var(--ink); line-height: 1.2; letter-spacing: -0.01em; margin-bottom: 1.25rem; }
+  .panel h2 { font-family: var(--serif); font-size: 26px; font-weight: 400; color: var(--ink); line-height: 1.25; margin-bottom: 1rem; }
+  .panel p { font-size: 15px; color: var(--mid); line-height: 1.8; max-width: 480px; }
+  .panel p + p { margin-top: 0.75rem; }
+
+  .detail-cards { display: flex; flex-direction: column; gap: 0; margin-top: 1.5rem; }
+  .detail-card { padding: 1.25rem 0; border-top: 1px solid var(--border); display: flex; gap: 1.25rem; align-items: flex-start; }
+  .detail-card:last-child { border-bottom: 1px solid var(--border); }
+  .dc-num { font-family: var(--serif); font-size: 22px; color: var(--accent); flex-shrink: 0; min-width: 28px; padding-top: 2px; }
+  .dc-content { flex: 1; }
+  .dc-title { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 0.35rem; }
+  .dc-body { font-size: 14px; color: var(--mid); line-height: 1.7; }
+
+  .reads-list { display: flex; flex-direction: column; gap: 0; margin-top: 1.5rem; }
+  .reads-item { padding: 0.85rem 0; border-top: 1px solid var(--border); display: flex; gap: 12px; }
+  .reads-item:last-child { border-bottom: 1px solid var(--border); }
+  .reads-dash { font-family: var(--serif); font-size: 16px; color: var(--accent); flex-shrink: 0; }
+  .reads-text { font-size: 14px; color: var(--mid); line-height: 1.65; }
+  .reads-text strong { font-weight: 500; color: var(--ink); }
+
+  .quote-block { background: var(--bg-mid); border-left: 2px solid var(--accent); padding: 1.1rem 1.25rem; margin-top: 1.5rem; font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--mid); line-height: 1.75; border-radius: 0; }
+
+  .not-list { display: flex; flex-direction: column; gap: 0; margin-top: 1.25rem; }
+  .not-item { padding: 0.75rem 0; border-top: 1px solid var(--border); font-size: 14px; color: var(--mid); line-height: 1.65; display: flex; gap: 10px; }
+  .not-item:last-child { border-bottom: 1px solid var(--border); }
+  .not-dash { color: var(--accent); font-size: 16px; flex-shrink: 0; font-family: var(--serif); }
+
+  .cta-wrap { max-width: 620px; margin: 0 auto; padding: 2.5rem 2rem 3.5rem; border-top: 1px solid var(--border); }
+  .btn-primary { display: inline-block; background: var(--accent); color: var(--bg); border-radius: 6px; padding: 0.9rem 2.25rem; font-size: 14px; font-weight: 500; font-family: var(--font); border: none; cursor: pointer; transition: opacity 0.15s; }
+  .btn-primary:hover { opacity: 0.88; }
+  .cta-note { font-size: 12px; color: var(--muted); margin-top: 0.85rem; line-height: 1.7; }
+
+  footer { border-top: 1px solid var(--border); padding: 1.25rem 2.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+  footer p { font-size: 11px; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    nav { padding: 1rem 1.25rem; }
+    .strip { padding: 0.4rem 1.25rem; }
+    .panel { padding: 2.5rem 1.25rem; }
+    .panel h1 { font-size: 28px; }
+    .panel h2 { font-size: 22px; }
+    .cta-wrap { padding: 2rem 1.25rem 3rem; }
+    footer { padding: 1.25rem; flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo-wrap">
+    <span class="logo-name">Love Gone</span>
+    <span class="logo-sub">Pet loss, read clearly</span>
+  </a>
+  <a class="nav-link" href="index.html">Home</a>
+</nav>
+
+<div class="strip">Private &middot; No account &middot; Nothing leaves your device</div>
+
+<div class="panel">
+  <p class="panel-label">How it works</p>
+  <h1>It reads what you give it.<br>Nothing more.</h1>
+  <p>Love Gone is a pattern-reading engine. You write what's happening. It counts what appears across your entries, tracks what is moving across time, holds contradictions, and surfaces what's missing. It does not generate, predict, or advise. It reads.</p>
+  <p>There is no right pace here. The map does not impose a timeline. Circling is not failure — it is often exactly what grief looks like.</p>
+</div>
+
+<div class="panel">
+  <p class="panel-label">The process</p>
+  <h2>Write once. Come back.<br>Let it read across time.</h2>
+  <div class="detail-cards">
+    <div class="detail-card">
+      <span class="dc-num">1</span>
+      <div class="dc-content">
+        <div class="dc-title">Write a baseline</div>
+        <div class="dc-body">Where things actually stand. What happened. What the days look like now. Be specific — what you keep thinking about, what's hard, what you keep coming back to.</div>
+      </div>
+    </div>
+    <div class="detail-card">
+      <span class="dc-num">2</span>
+      <div class="dc-content">
+        <div class="dc-title">Come back when something happens</div>
+        <div class="dc-body">A hard day. An anniversary. A moment that caught you off guard. Add it as a new entry. The map reads across everything — not just the latest thing.</div>
+      </div>
+    </div>
+    <div class="detail-card">
+      <span class="dc-num">3</span>
+      <div class="dc-content">
+        <div class="dc-title">Read the map</div>
+        <div class="dc-body">What's moving and what isn't. What you keep circling. What you say about the grief versus what you describe doing in it. Gaps the map found that you didn't put in.</div>
+      </div>
+    </div>
+    <div class="detail-card">
+      <span class="dc-num">4</span>
+      <div class="dc-content">
+        <div class="dc-title">Export your report</div>
+        <div class="dc-body">When you're ready, export a full pattern report — for yourself, or to share with a grief counsellor or therapist. $9/month, cancel anytime.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <p class="panel-label">What it reads</p>
+  <h2>The guilt. The quiet house.<br>The grief that others don't see.</h2>
+  <p>Pet loss grief is often carried alone because others don't always understand it. The map reads what's there without needing to be convinced it's real.</p>
+  <div class="reads-list">
+    <div class="reads-item"><span class="reads-dash">&mdash;</span><span class="reads-text"><strong>The euthanasia decision</strong> — the guilt, the second-guessing, the replaying. Knowing it was the right thing and still wondering if it was.</span></div>
+    <div class="reads-item"><span class="reads-dash">&mdash;</span><span class="reads-text"><strong>The functional absence</strong> — still setting the bowl out, still looking for them at the door, still turning to tell them something.</span></div>
+    <div class="reads-item"><span class="reads-dash">&mdash;</span><span class="reads-text"><strong>The isolation</strong> — carrying it alone because the people around you have moved on or never fully understood.</span></div>
+    <div class="reads-item"><span class="reads-dash">&mdash;</span><span class="reads-text"><strong>The long tail</strong> — grief that is still present months later, when the world has stopped asking.</span></div>
+    <div class="reads-item"><span class="reads-dash">&mdash;</span><span class="reads-text"><strong>The contradictions</strong> — loving them and feeling relief. Knowing it was right and feeling guilty. Both are real. The map holds them.</span></div>
+  </div>
+  <div class="quote-block">"She died three weeks ago. I had to make the decision and I keep wondering if I did it too soon. The house is so quiet. I keep looking for her by the door. People keep telling me it gets easier but I don't want easier right now. I just want to say what it's actually like."</div>
+</div>
+
+<div class="panel">
+  <p class="panel-label">What it isn't</p>
+  <h2>It doesn't tell you how to grieve.<br>It reads what's there.</h2>
+  <div class="not-list">
+    <div class="not-item"><span class="not-dash">&mdash;</span><span>Not a chatbot. It doesn't respond, generate, or converse.</span></div>
+    <div class="not-item"><span class="not-dash">&mdash;</span><span>Not a grief counsellor. It doesn't diagnose, assess risk, or give clinical findings.</span></div>
+    <div class="not-item"><span class="not-dash">&mdash;</span><span>Not a timeline. It never tells you where you should be or how long this should take.</span></div>
+    <div class="not-item"><span class="not-dash">&mdash;</span><span>Not storing your data. Everything stays on your device. Nothing is sent anywhere.</span></div>
+  </div>
+</div>
+
+<div class="cta-wrap">
+  <a class="btn-primary" href="tool.html">Write about them — free</a>
+  <p class="cta-note">No sign-up. Nothing stored anywhere but your device.<br>Export your full report for $9/month &middot; cancel anytime.</p>
+</div>
+
+<footer>
+  <p>© 2026 Love Gone</p>
+  <p>Built on the <a href="https://lace-v.com" style="color: var(--muted); text-decoration: underline; text-underline-offset: 2px;">Lace V</a> pattern-reading engine</p>
+</footer>
+
+</body>
+</html>
