@@ -90,9 +90,8 @@
 
 <script>
   // Set the access token in localStorage
-  const STORAGE_KEY = 'lacev_access_token';
-  const expires = Date.now() + (30 * 24 * 60 * 60 * 1000);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ granted: true, expires }));
+  const STORAGE_KEY = 'lovegone_access_token';
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ granted: true, purchased: Date.now() }));
 
   // Auto-redirect to domains after 4 seconds
   let countdown = 4;
