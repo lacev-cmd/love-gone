@@ -1,39 +1,42 @@
-/* ── LOVE GONE PAYMENT GATE v1.1 ────────────────────────────────────────────
+/* ── LOVE GONE PAYMENT GATE v2.0 ────────────────────────────────────────────
    One-time unlock for export and print functions.
-   Uses localStorage token set by payment-success.html after Stripe checkout.
+   Token issued and verified server-side via Railway backend.
    Product:      Love Gone — US$9.99 one-time
    Payment link: https://buy.stripe.com/test_eVqfZg36nbzD2Pn3rc87K01
    Price ID:     price_1Tgev2CFrQQKByC6r8aTKo9r
-   Updated:      2026-06-10
+   Updated:      2026-06-11
    ──────────────────────────────────────────────────────────────────────────── */
 
 const LaceVGate = (() => {
 
-  const STORAGE_KEY   = 'lovegone_access_token';
-  const PAYMENT_LINK  = 'https://buy.stripe.com/test_eVqfZg36nbzD2Pn3rc87K01';
-  const MODAL_ID      = 'lacev-gate-modal';
+  const STORE_KEY    = 'lovegone_access_token';
+  const PAYMENT_LINK = 'https://buy.stripe.com/test_eVqfZg36nbzD2Pn3rc87K01';
+  const BACKEND      = 'https://lacev-backend-production.up.railway.app';
+  const MODAL_ID     = 'lacev-gate-modal';
 
-  /* ── Token helpers ────────────────────────────────────────────────────── */
+  /* ── Token verification (server-side) ────────────────────────────────── */
 
-  function hasAccess() {
+  async function hasAccess() {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return false;
-      const data = JSON.parse(raw);
-      if (!data.granted) return false;
-      // One-time purchase — no expiry check, access is permanent
-      return true;
+      const token = localStorage.getItem(STORE_KEY);
+      if (!token) return false;
+
+      const res = await fetch(`${BACKEND}/token/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      });
+
+      if (!res.ok) return false;
+      const data = await res.json();
+      return data.valid === true;
     } catch (e) {
       return false;
     }
   }
 
-  function grantAccess() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ granted: true, purchased: Date.now() }));
-  }
-
   function revokeAccess() {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORE_KEY);
   }
 
   /* ── Modal ────────────────────────────────────────────────────────────── */
@@ -91,7 +94,7 @@ const LaceVGate = (() => {
       }
       #lacev-gate-subscribe {
         display: block; width: 100%;
-        background: #C4965A; color: #2A2420;
+        background: #C4965A; color: #1A0A0A;
         border: none; border-radius: 8px;
         padding: 0.85rem; font-size: 14px; font-weight: 500;
         cursor: pointer; text-align: center;
@@ -117,13 +120,13 @@ const LaceVGate = (() => {
       <div id="lacev-gate-inner">
         <button id="lacev-gate-close" aria-label="Close">×</button>
         <p class="gate-kicker">Export &amp; Reports</p>
-        <h2>Download your map.<br>Keep it with you.</h2>
+        <h2>Download your grief map.<br>Keep it with you.</h2>
         <p class="gate-body">Your map stays private to your device. A one-time payment unlocks downloading your data and printing your full report — permanently, on this device.</p>
         <div class="gate-price">
           <strong>US$9.99</strong>
           <span>· one-time payment</span>
         </div>
-        <a id="lacev-gate-subscribe" href="${PAYMENT_LINK}" target="_blank">Unlock — US$9.99</a>
+        <a id="lacev-gate-subscribe" href="${PAYMENT_LINK}">Unlock — US$9.99</a>
         <span id="lacev-gate-restore">Already purchased? <a id="lacev-restore-link">Restore access</a></span>
       </div>
     `;
@@ -145,42 +148,25 @@ const LaceVGate = (() => {
   }
 
   /* ── Restore access ───────────────────────────────────────────────────── */
+  // No server-side restore endpoint exists yet.
+  // Direct user to re-complete payment via the payment link.
 
   function restoreAccess() {
-    const email = prompt('Enter the email address you used when you purchased.\n\nIf your purchase is confirmed, access will be restored.');
-    if (!email) return;
-    grantAccess();
     closeModal();
-    alert('Access restored. You can now export and print your reports.');
+    alert('To restore access, please complete the purchase again using the same device. If you believe this is an error, contact support.');
   }
 
-  /* ── Public gate function ─────────────────────────────────────────────── */
+  /* ── Public gate function (async) ────────────────────────────────────── */
 
-  function check(onGranted) {
-    if (hasAccess()) {
+  async function check(onGranted) {
+    const granted = await hasAccess();
+    if (granted) {
       onGranted();
     } else {
       openModal();
     }
   }
 
-  /* ── Check for token on page load (set by payment-success.html) ───────── */
-
-  function init() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('access') === 'granted') {
-      grantAccess();
-      const clean = window.location.pathname;
-      window.history.replaceState({}, '', clean);
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  return { check, hasAccess, grantAccess, revokeAccess };
+  return { check, hasAccess, revokeAccess };
 
 })();
