@@ -1,42 +1,59 @@
-/* ── LOVE GONE PAYMENT GATE v2.0 ────────────────────────────────────────────
+/* ── LOVE GONE PAYMENT GATE v2.0 ──────────────────────────────────────
    One-time unlock for export and print functions.
    Token issued and verified server-side via Railway backend.
    Product:      Love Gone — US$9.99 one-time
    Payment link: https://buy.stripe.com/test_eVqfZg36nbzD2Pn3rc87K01
    Price ID:     price_1Tgev2CFrQQKByC6r8aTKo9r
-   Updated:      2026-06-11
+   Updated:      2026-06-12
    ──────────────────────────────────────────────────────────────────────────── */
 
 const LaceVGate = (() => {
 
-  const STORE_KEY    = 'lovegone_access_token';
+  const STORAGE_KEY  = 'lovegone_access_token';
   const PAYMENT_LINK = 'https://buy.stripe.com/test_eVqfZg36nbzD2Pn3rc87K01';
   const BACKEND      = 'https://lacev-backend-production.up.railway.app';
   const MODAL_ID     = 'lacev-gate-modal';
 
-  /* ── Token verification (server-side) ────────────────────────────────── */
+  /* ── Token helpers ────────────────────────────────────────────────────── */
 
-  async function hasAccess() {
+  function getToken() {
     try {
-      const token = localStorage.getItem(STORE_KEY);
-      if (!token) return false;
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const data = JSON.parse(raw);
+      return data.token || null;
+    } catch (e) {
+      return null;
+    }
+  }
 
-      const res = await fetch(`${BACKEND}/token/verify`, {
+  function storeToken(token) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ token, granted: true, purchased: Date.now() }));
+  }
+
+  function revokeAccess() {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+
+  async function verifyToken(token) {
+    try {
+      const res = await fetch(BACKEND + '/token/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token })
       });
-
       if (!res.ok) return false;
       const data = await res.json();
-      return data.valid === true;
+      return !!data.valid;
     } catch (e) {
       return false;
     }
   }
 
-  function revokeAccess() {
-    localStorage.removeItem(STORE_KEY);
+  async function hasAccess() {
+    const token = getToken();
+    if (!token) return false;
+    return await verifyToken(token);
   }
 
   /* ── Modal ────────────────────────────────────────────────────────────── */
@@ -49,15 +66,15 @@ const LaceVGate = (() => {
       #lacev-gate-modal {
         display: none;
         position: fixed; inset: 0; z-index: 9999;
-        background: rgba(26,10,10,0.65);
+        background: rgba(28,20,16,0.6);
         align-items: center; justify-content: center;
         padding: 1.5rem;
         font-family: 'Inter', ui-sans-serif, sans-serif;
       }
       #lacev-gate-modal.open { display: flex; }
       #lacev-gate-inner {
-        background: #2F2925;
-        border: 1px solid #3D3530;
+        background: #F7F3EE;
+        border: 1px solid #E0D8CE;
         border-radius: 12px;
         padding: 2rem 2rem 1.75rem;
         max-width: 400px; width: 100%;
@@ -66,20 +83,20 @@ const LaceVGate = (() => {
       #lacev-gate-close {
         position: absolute; top: 1rem; right: 1rem;
         background: none; border: none; cursor: pointer;
-        font-size: 20px; color: #8A7060; line-height: 1;
+        font-size: 20px; color: #B09A8A; line-height: 1;
         padding: 0.25rem;
       }
-      #lacev-gate-close:hover { color: #F0EBE3; }
+      #lacev-gate-close:hover { color: #1C1410; }
       #lacev-gate-inner .gate-kicker {
         font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
-        color: #8A7060; font-weight: 600; margin: 0 0 0.75rem;
+        color: #B09A8A; font-weight: 600; margin: 0 0 0.75rem;
       }
       #lacev-gate-inner h2 {
-        font-size: 20px; font-weight: 500; color: #F0EBE3;
+        font-size: 20px; font-weight: 500; color: #1C1410;
         line-height: 1.3; margin: 0 0 0.65rem;
       }
       #lacev-gate-inner .gate-body {
-        font-size: 13px; color: #A89880; line-height: 1.65;
+        font-size: 13px; color: #6A5A4A; line-height: 1.65;
         margin: 0 0 1.25rem;
       }
       #lacev-gate-inner .gate-price {
@@ -87,14 +104,14 @@ const LaceVGate = (() => {
         margin: 0 0 1.25rem;
       }
       #lacev-gate-inner .gate-price strong {
-        font-size: 26px; font-weight: 500; color: #F0EBE3;
+        font-size: 26px; font-weight: 500; color: #1C1410;
       }
       #lacev-gate-inner .gate-price span {
-        font-size: 13px; color: #A89880;
+        font-size: 13px; color: #6A5A4A;
       }
       #lacev-gate-subscribe {
         display: block; width: 100%;
-        background: #C4965A; color: #1A0A0A;
+        background: #7A4A5A; color: #F7F3EE;
         border: none; border-radius: 8px;
         padding: 0.85rem; font-size: 14px; font-weight: 500;
         cursor: pointer; text-align: center;
@@ -104,13 +121,9 @@ const LaceVGate = (() => {
       }
       #lacev-gate-subscribe:hover { opacity: 0.88; }
       #lacev-gate-restore {
-        font-size: 12px; color: #8A7060; text-align: center;
+        font-size: 12px; color: #9A8070; text-align: center;
         display: block;
       }
-      #lacev-gate-restore a {
-        color: #C4965A; cursor: pointer; text-decoration: none;
-      }
-      #lacev-gate-restore a:hover { text-decoration: underline; }
     `;
     document.head.appendChild(style);
 
@@ -120,21 +133,20 @@ const LaceVGate = (() => {
       <div id="lacev-gate-inner">
         <button id="lacev-gate-close" aria-label="Close">×</button>
         <p class="gate-kicker">Export &amp; Reports</p>
-        <h2>Download your grief map.<br>Keep it with you.</h2>
+        <h2>Download your map.<br>Keep it with you.</h2>
         <p class="gate-body">Your map stays private to your device. A one-time payment unlocks downloading your data and printing your full report — permanently, on this device.</p>
         <div class="gate-price">
           <strong>US$9.99</strong>
           <span>· one-time payment</span>
         </div>
-        <a id="lacev-gate-subscribe" href="${PAYMENT_LINK}">Unlock — US$9.99</a>
-        <span id="lacev-gate-restore">Already purchased? <a id="lacev-restore-link">Restore access</a></span>
+        <a id="lacev-gate-subscribe" href="${PAYMENT_LINK}" target="_blank">Unlock — US$9.99</a>
+        <span id="lacev-gate-restore">Already purchased? Use the link from your confirmation email to restore access on this device.</span>
       </div>
     `;
     document.body.appendChild(modal);
 
     document.getElementById('lacev-gate-close').addEventListener('click', closeModal);
     modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-    document.getElementById('lacev-restore-link').addEventListener('click', restoreAccess);
   }
 
   function openModal() {
@@ -147,26 +159,16 @@ const LaceVGate = (() => {
     if (m) m.classList.remove('open');
   }
 
-  /* ── Restore access ───────────────────────────────────────────────────── */
-  // No server-side restore endpoint exists yet.
-  // Direct user to re-complete payment via the payment link.
-
-  function restoreAccess() {
-    closeModal();
-    alert('To restore access, please complete the purchase again using the same device. If you believe this is an error, contact support.');
-  }
-
-  /* ── Public gate function (async) ────────────────────────────────────── */
+  /* ── Public gate function ─────────────────────────────────────────────── */
 
   async function check(onGranted) {
-    const granted = await hasAccess();
-    if (granted) {
+    if (await hasAccess()) {
       onGranted();
     } else {
       openModal();
     }
   }
 
-  return { check, hasAccess, revokeAccess };
+  return { check, hasAccess, getToken, storeToken, revokeAccess };
 
 })();
